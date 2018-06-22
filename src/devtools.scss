@@ -1,5 +1,5 @@
-@import 'vendor-overrides';
-@import '../node_modules/bootstrap/scss/bootstrap';
+//@import 'vendor-overrides';
+@import '~bootstrap/scss/bootstrap';
 
 :root {
   font-family: $font-family-base;
