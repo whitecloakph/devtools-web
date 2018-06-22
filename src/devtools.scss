@@ -1,0 +1,38 @@
+@import 'vendor-overrides';
+@import '../node_modules/bootstrap/scss/bootstrap';
+
+:root {
+  font-family: $font-family-base;
+  margin-top: $spacer * 3;
+}
+
+head {
+  padding-left: $spacer;
+  padding-right: $spacer;
+  height: $spacer * 3;
+  box-sizing: border-box;
+  top: 0;
+  left: 0;
+  background-color: $primary;
+  color: $light;
+  z-index: 2000;
+}
+
+title {
+  font: inherit;
+}
+
+h1.card-title {
+  font: inherit;
+  font-weight: $font-weight-bold;
+}
+
+@include media-breakpoint-only('sm') {
+  .card-columns {
+    column-count: 2;
+  }
+}
+
+.card {
+  @include box-shadow($box-shadow-sm);
+}
