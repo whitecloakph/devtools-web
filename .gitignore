@@ -68,3 +68,4 @@ typings/
 .next
 public/*.js
 public/*.css
+public/*.js.map

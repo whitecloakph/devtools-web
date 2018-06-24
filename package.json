@@ -13,28 +13,38 @@
   "license": "MIT",
   "repository": "https://github.com/whitecloakph/devtools-web.git",
   "dependencies": {
+    "antd": "^3.6.3",
     "axios": "^0.18.0",
     "bootstrap": "^4.1.1",
+    "connected-react-router": "^4.3.0",
     "eslint": "^4.19.1",
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.9.1",
     "express": "^4.16.3",
+    "history": "^4.7.2",
+    "nanoid": "^1.0.4",
     "nodemon": "^1.17.5",
     "prop-types": "^15.6.2",
     "react": "^16.4.1",
     "react-autobind": "^1.0.6",
     "react-dom": "^16.4.1",
-    "react-form": "^3.5.5"
+    "react-redux": "^5.0.7",
+    "react-router": "^4.3.1",
+    "react-router-dom": "^4.3.1",
+    "redux": "^4.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
     "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "css-loader": "^0.28.11",
     "eslint-config-airbnb": "^17.0.0",
+    "less": "^3.0.4",
+    "less-loader": "^4.1.0",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.0.3",
     "style-loader": "^0.21.0",
@@ -47,6 +57,33 @@
     "env": {
       "browser": true,
       "webextensions": true
+    },
+    "rules": {
+      "semi": [
+        "error",
+        "never"
+      ],
+      "comma-dangle": [
+        "error",
+        "always"
+      ],
+      "object-property-newline": [
+        "error",
+        {
+          "allowMultiplePropertiesPerLine": true
+        }
+      ],
+      "object-curly-newline": [
+        "error",
+        {
+          "minProperties": 4,
+          "consistent": true
+        }
+      ],
+      "react/jsx-max-props-per-line": [
+        "error",
+        1
+      ]
     }
   }
 }

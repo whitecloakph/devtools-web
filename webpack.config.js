@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('path')
 
 module.exports = {
   entry: './src/devtools.js',
@@ -6,6 +6,7 @@ module.exports = {
     path: path.resolve(__dirname, './public'),
     filename: 'devtools.js',
   },
+  devtool: 'cheap-source-map',
   mode: 'development',
   module: {
     rules: [
@@ -20,24 +21,38 @@ module.exports = {
           },
           {
             loader: 'sass-loader',
+          },
+        ],
+      },
+      {
+        test: /\.less$/,
+        use: [
+          {
+            loader: 'style-loader',
+          },
+          {
+            loader: 'css-loader',
+          },
+          {
+            loader: 'less-loader',
             options: {
-              includePaths: ['absolute/path/a', 'absolute/path/b'],
+              javascriptEnabled: true,
             },
           },
         ],
       },
       {
         test: /\.{otf,ttf,eot,svg,png,jpg,gif}$/,
-        loaders: ['file-loader'],
+        loaders: ['file-loader', ],
       },
       {
         test: /\.jsx$/,
-        loader: ['babel-loader'],
+        loader: ['babel-loader', ],
       },
     ],
   },
   resolve: {
-    extensions: ['.js', '.json', '.jsx'],
-    modules: ['node_modules'],
+    extensions: ['.js', '.json', '.jsx', ],
+    modules: ['node_modules', ],
   },
-};
+}

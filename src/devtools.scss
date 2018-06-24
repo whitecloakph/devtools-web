@@ -1,9 +1,9 @@
-//@import 'vendor-overrides';
 @import '~bootstrap/scss/bootstrap';
 
 :root {
   font-family: $font-family-base;
   margin-top: $spacer * 3;
+  font-size: 14px;
 }
 
 head {

@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
+import './devtools.less'
 import './devtools.scss'
 
 function createDummyCollection() {
