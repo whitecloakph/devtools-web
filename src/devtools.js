@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
-//import './devtools.less'
 import './devtools.scss'
 
 ReactDOM
@@ -9,13 +8,13 @@ ReactDOM
     React.createElement(App),
     window.document.getElementById('root')
   )
-
-if (chrome.devtools) {
-  chrome.devtools.panels.create(
-    "DevTools",
-    "icon.png",
-    "devtools.html",
-    (panel) => {
-    }
-  )
-}
+//
+//if (chrome && chrome.devtools) {
+//  chrome.devtools.panels.create(
+//    "DevTools",
+//    "icon.png",
+//    "devtools.html",
+//    (panel) => {
+//    }
+//  )
+//}

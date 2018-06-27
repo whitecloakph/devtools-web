@@ -1,74 +1,80 @@
 import React from 'react'
-import { Form, Input } from 'antd'
+import autoBind from 'react-autobind'
+import { Form, } from 'react-form'
+import { func, bool, } from 'prop-types'
+
+import TextBox from '../../../../components/TextBox'
+
+function validate({ name, apiKey, }) {
+  const errors = {}
+
+  if (!name) {
+    errors.name = 'Name is required.'
+  }
+
+  if (apiKey) {
+    errors.name = 'API key is required.'
+  }
+
+  return errors
+}
 
 class AddConfigurationForm extends React.Component {
   constructor() {
     super()
-    this.state = {
-      labelCol: {
-        span: 4,
-      },
-      wrapperCol: {
-        span: 20,
-      },
-    }
+    autoBind(this)
   }
 
   render() {
-    const { form } = this.props
-    const { labelCol, wrapperCol } = this.state
-
+    const { onSubmit, disabled, } = this.props
     return (
-      <Form>
-        <Form.Item
-          labelCol={labelCol}
-          wrapperCol={wrapperCol}
-          label="Name"
-        >
-          {
-            form.getFieldDecorator(
-              'name',
-              {
-                rules: [
-                  {
-                    required: true,
-                    message: 'Name is required',
-                  },
-                ],
-              },
-            )(
-              <Input
-                placeholder="Name"
-              />,
-            )
-          }
-        </Form.Item>
-        <Form.Item
-          labelCol={labelCol}
-          wrapperCol={wrapperCol}
-          label="API Key"
-        >
-          {
-            form.getFieldDecorator(
-              'apiKey',
-              {
-                rules: [
-                  {
-                    required: true,
-                    message: 'API Key is required',
-                  },
-                ],
-              },
-            )(
-              <Input
-                placeholder="API Key"
-              />,
-            )
-          }
-        </Form.Item>
+      <Form
+        onSubmit={onSubmit}
+        validate={validate}
+      >
+        {({ submitForm, }) => (
+          <form
+            onSubmit={submitForm}
+          >
+            <fieldset
+              style={{ border: 0, padding: 0, margin: 0, }}
+              disabled={disabled}
+            >
+              <div style={{ marginTop: 16, marginBottom: 16, }}>
+                <TextBox
+                  name="name"
+                  label="Name"
+                />
+              </div>
+              <div style={{ marginTop: 16, marginBottom: 16, }}>
+                <TextBox
+                  name="apiKey"
+                  label="API Key"
+                />
+              </div>
+              <div style={{ marginTop: 16, }}>
+                <button
+                  type="submit"
+                >
+                  Add Configuration
+                </button>
+              </div>
+            </fieldset>
+          </form>
+        )}
       </Form>
     )
   }
 }
 
-export default Form.create()(AddConfigurationForm)
+AddConfigurationForm.defaultProps = {
+  onSubmit: null,
+  disabled: false,
+}
+
+AddConfigurationForm.propTypes = {
+  onSubmit: func,
+  disabled: bool,
+}
+
+export default AddConfigurationForm

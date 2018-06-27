@@ -2,22 +2,20 @@ import React from 'react'
 import autoBind from 'react-autobind'
 import { connect, } from 'react-redux'
 import { bindActionCreators, } from 'redux'
-import { arrayOf, shape, func, } from 'prop-types'
+import { shape, func, } from 'prop-types'
 import { push as actionPush, } from 'connected-react-router'
-import { Link as RouterLink, } from 'react-router-dom'
-import SplitPane from 'react-split-pane'
 
-import axios from '../../axios'
+import { getRootCollections, } from '../../services/Collection'
+
+import AddConfigurationForm from './components/AddConfigurationForm'
 
 import {
   addConfiguration as actionAddConfiguration,
-  clearConfigurationList as actionClearConfigurationList,
 } from '../../store/configuration'
 
 class Home extends React.Component {
   constructor() {
     super()
-    this.addConfigurationForm = null
     this.state = {
       isAddingConfiguration: false,
     }
@@ -30,24 +28,13 @@ class Home extends React.Component {
     }
   }
 
-  setAddConfigurationForm(el) {
-    this.addConfigurationForm = el
-  }
-
-  submitForm() {
-    const values = this.addConfigurationForm.props.form.getFieldsValue()
+  submitForm(values) {
     const { addConfiguration, } = this.props
 
     this.setState({
       isAddingConfiguration: true,
     })
-    axios({
-      method: 'get',
-      url: '/collections',
-      headers: {
-        'X-Api-Key': values.apiKey,
-      },
-    })
+    getRootCollections({ apiKey: values.apiKey, })
       .then(
         (res) => {
           addConfiguration({
@@ -67,75 +54,35 @@ class Home extends React.Component {
       )
   }
 
-  // confirmClearConfigurationList() {
-  //   const { clearConfigurationList, } = this.props
-  //   Modal.confirm({
-  //     title: 'Clear Configuration List',
-  //     content: 'Are you sure you want to clear the configuration list?',
-  //     onOk() {
-  //       clearConfigurationList()
-  //     },
-  //     onCancel() {},
-  //   })
-  // }
-
   render() {
-    const { configurations, } = this.props
     const { isAddingConfiguration, } = this.state
 
     return (
-      <SplitPane
-        split="vertical"
-        minSize={200}
-      >
-        <div
-          style={{ position: 'relative', height: '100%', }}
-        >
-          <SplitPane
-            split="horizontal"
-            defaultSize={84}
-          >
-            <div>
-              <div style={{ padding: 16, }}>
-                <button type="button">
-                  Clear Configurations
-                </button>
-              </div>
-            </div>
-            <div>
-              <RouterLink
-                to="/"
-              >
-                Configurations
-              </RouterLink>
-              <hr />
-              <RouterLink>
-                
-              </RouterLink>
-            </div>
-          </SplitPane>
-        </div>
-        <div>
-          A
-        </div>
-      </SplitPane>
+      <div style={{ padding: '0 16px', margin: '16px 0', }}>
+        <h1>
+          Configurations
+        </h1>
+        <p>
+          Please input the details of your API below.
+        </p>
+        <AddConfigurationForm
+          onSubmit={this.submitForm}
+          disabled={isAddingConfiguration}
+        />
+      </div>
     )
   }
 }
 
 Home.defaultProps = {
-  configurations: [],
   selectedConfiguration: null,
   addConfiguration: null,
-  clearConfigurationList: null,
   push: null,
 }
 
 Home.propTypes = {
-  configurations: arrayOf(shape()),
   selectedConfiguration: shape(),
   addConfiguration: func,
-  clearConfigurationList: func,
   push: func,
 }
 
@@ -145,7 +92,6 @@ const mapStateToProps = ({ configuration, }) => ({
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   addConfiguration: actionAddConfiguration,
-  clearConfigurationList: actionClearConfigurationList,
   push: actionPush,
 }, dispatch)
 

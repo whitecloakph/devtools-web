@@ -5,5 +5,8 @@ function generateId() {
   return generate(url, 16)
 }
 
-// eslint-disable-next-line import/prefer-default-export
-export { generateId, }
+function generateFieldDOMId(prefix) {
+  return `${prefix}-${generate('1234567890abcdef', 16)}`
+}
+
+export { generateId, generateFieldDOMId, }
