@@ -13,14 +13,8 @@
   "license": "MIT",
   "repository": "https://github.com/whitecloakph/devtools-web.git",
   "dependencies": {
-    "antd": "^3.6.3",
     "axios": "^0.18.0",
-    "bootstrap": "^4.1.1",
     "connected-react-router": "^4.3.0",
-    "eslint": "^4.19.1",
-    "eslint-plugin-import": "^2.12.0",
-    "eslint-plugin-jsx-a11y": "^6.0.3",
-    "eslint-plugin-react": "^7.9.1",
     "express": "^4.16.3",
     "history": "^4.7.2",
     "nanoid": "^1.0.4",
@@ -32,6 +26,7 @@
     "react-redux": "^5.0.7",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
+    "react-split-pane": "^0.1.77",
     "redux": "^4.0.0"
   },
   "devDependencies": {
@@ -50,7 +45,11 @@
     "style-loader": "^0.21.0",
     "url-loader": "^1.0.1",
     "webpack": "^4.12.0",
-    "webpack-cli": "^3.0.8"
+    "webpack-cli": "^3.0.8",
+    "eslint": "^4.19.1",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.9.1"
   },
   "eslintConfig": {
     "extends": "airbnb",

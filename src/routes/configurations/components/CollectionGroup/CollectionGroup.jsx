@@ -1,68 +1,49 @@
 import React from 'react'
 import { arrayOf, shape, } from 'prop-types'
 import {
-  Collapse,
+  Row,
+  Col,
+  Card,
   Switch,
   List,
 } from 'antd'
 
-//<Switch
-//defaultChecked={
-//  endpoints.reduce((a = true, endpoint) => a || endpoint.active)
-//}
-///>
-
-//{
-//  endpoints.length > 0
-//    ? (
-//      <List
-//        dataSource={endpoints}
-//        renderItem={({ name: endpointName, options, }) => (
-//          <List.Item>
-//            <List.Item.Meta
-//              title={endpointName}
-//            />
-//          </List.Item>
-//        )}
-//      />
-//    )
-//    : (
-//      <span>
-//                          No endpoints.
-//                        </span>
-//    )
-//}
-
 function CollectionGroup({ collections, }) {
   return (
-    <Collapse>
+    <Row
+      gutter={16}
+      style={{
+        marginTop: 4,
+        marginBottom: 4,
+        marginLeft: 0,
+        marginRight: 0,
+        paddingLeft: 4,
+        paddingRight: 4,
+      }}
+    >
       {
         collections
           .filter(({ endpoints, }) => endpoints && endpoints.length > 0)
           .map(({ id, name, endpoints, }) => (
-            <Collapse.Panel
+            <Col
               key={id}
-              span={12}
+              span={8}
               header={name}
+              style={{
+                marginTop: 4,
+                marginBottom: 4,
+              }}
             >
-              <List
-                size="small"
-                dataSource={endpoints}
-                renderItem={({ name: endpointName, options, active, }) => (
-                  <List.Item>
-                    <List.Item.Meta
-                      title={endpointName}
-                    />
-                    <Switch
-                      defaultChecked={active}
-                    />
-                  </List.Item>
-                )}
-              />
-            </Collapse.Panel>
+              <Card>
+                <Card.Meta
+                  title={name}
+                  description={`${endpoints ? endpoints.length : '-'} endpoint(s)`}
+                />
+              </Card>
+            </Col>
           ))
       }
-    </Collapse>
+    </Row>
   )
 }
 

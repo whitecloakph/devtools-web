@@ -2,10 +2,10 @@ import React from 'react'
 import autoBind from 'react-autobind'
 import { connect, } from 'react-redux'
 import { bindActionCreators, } from 'redux'
-import { Modal, Button, Card, } from 'antd'
 import { arrayOf, shape, func, } from 'prop-types'
 import { push as actionPush, } from 'connected-react-router'
 import { Link as RouterLink, } from 'react-router-dom'
+import SplitPane from 'react-split-pane'
 
 import axios from '../../axios'
 
@@ -13,8 +13,6 @@ import {
   addConfiguration as actionAddConfiguration,
   clearConfigurationList as actionClearConfigurationList,
 } from '../../store/configuration'
-
-import AddConfigurationForm from './components/AddConfigurationForm'
 
 class Home extends React.Component {
   constructor() {
@@ -69,77 +67,58 @@ class Home extends React.Component {
       )
   }
 
-  confirmClearConfigurationList() {
-    const { clearConfigurationList, } = this.props
-    Modal.confirm({
-      title: 'Clear Configuration List',
-      content: 'Are you sure you want to clear the configuration list?',
-      onOk() {
-        clearConfigurationList()
-      },
-      onCancel() {},
-    })
-  }
+  // confirmClearConfigurationList() {
+  //   const { clearConfigurationList, } = this.props
+  //   Modal.confirm({
+  //     title: 'Clear Configuration List',
+  //     content: 'Are you sure you want to clear the configuration list?',
+  //     onOk() {
+  //       clearConfigurationList()
+  //     },
+  //     onCancel() {},
+  //   })
+  // }
 
   render() {
     const { configurations, } = this.props
     const { isAddingConfiguration, } = this.state
+
     return (
-      <React.Fragment>
-        <Modal
-          title="Add Configuration"
-          visible={configurations.length < 1}
-          closable={false}
-          maskClosable={configurations.length > 0}
-          footer={(
-            <Button
-              type="primary"
-              onClick={this.submitForm}
-              loading={isAddingConfiguration}
-            >
-              Submit
-            </Button>
-          )}
+      <SplitPane
+        split="vertical"
+        minSize={200}
+      >
+        <div
+          style={{ position: 'relative', height: '100%', }}
         >
-          <AddConfigurationForm
-            wrappedComponentRef={this.setAddConfigurationForm}
-          />
-        </Modal>
-        <section>
-          <div className="d-flex justify-content-between align-items-center">
-            <h1>
-              Configurations
-            </h1>
+          <SplitPane
+            split="horizontal"
+            defaultSize={84}
+          >
             <div>
-              <Button
-                type="danger"
-                onClick={this.confirmClearConfigurationList}
-              >
-                Clear
-              </Button>
+              <div style={{ padding: 16, }}>
+                <button type="button">
+                  Clear Configurations
+                </button>
+              </div>
             </div>
-          </div>
-          <nav>
-            {
-              configurations.map(({ id, name, apiKey, }) => (
-                <RouterLink
-                  key={id}
-                  to={`/configurations/${id}`}
-                >
-                  <Card
-                    hoverable
-                  >
-                    <Card.Meta
-                      title={name}
-                      description={apiKey}
-                    />
-                  </Card>
-                </RouterLink>
-              ))
-            }
-          </nav>
-        </section>
-      </React.Fragment>
+            <div>
+              <RouterLink
+                to="/"
+              >
+                Configurations
+              </RouterLink>
+              <hr />
+              <RouterLink>
+                
+              </RouterLink>
+            </div>
+          </SplitPane>
+        </div>
+        <div>
+          A
+        </div>
+      </SplitPane>
     )
   }
 }
