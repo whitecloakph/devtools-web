@@ -1,29 +1,32 @@
 import React from 'react'
-import { Link as RouterLink, } from 'react-router-dom'
+import { arrayOf, shape, func, } from 'prop-types'
+import { NavLink as RouterLink, } from 'react-router-dom'
 import { connect, } from 'react-redux'
+import { goBack as actionGoBack, } from 'connected-react-router'
 import { bindActionCreators, } from 'redux'
 
 import {
-  clearConfigurationList as actionClearConfigurationList,
+  clearConfigurations as actionClearConfigurations,
+  removeConfiguration as actionRemoveConfiguration,
 } from '../../store/configuration'
 
 function Sidebar({
   configurations,
-  clearConfigurationList,
+  clearConfigurations,
+  removeConfiguration,
 }) {
   return (
     <div
-      style={{
-        display: 'flex',
-        position: 'relative',
-        height: '100%',
-        flexDirection: 'column',
-      }}
+      className="sidebar"
     >
-      <div style={{ padding: 4, borderBottom: '1px solid', }}>
+      <div
+        className="toolbar"
+        style={{ padding: 4, }}
+      >
         <button
           type="button"
-          onClick={clearConfigurationList}
+          onClick={clearConfigurations}
+          disabled={configurations.length < 1}
         >
           Clear
         </button>
@@ -45,8 +48,9 @@ function Sidebar({
                 to="/"
                 style={{
                   display: 'block',
-                  padding: 16,
                 }}
+                className="nav"
+                isActive={(match, location) => location.pathname === '/'}
               >
                 Configurations
               </RouterLink>
@@ -54,29 +58,48 @@ function Sidebar({
             {
               configurations && configurations.length > 0
               && (
-                <div style={{ borderTop: '1px solid', }}>
+                <div className="configuration-list">
                   {
                     configurations.map(configuration => (
                       <RouterLink
-                        to={`/configurations/${configuration.id}`}
+                        key={configuration.id}
+                        to={`/configurations/browse/${configuration.id}`}
                         style={{
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'space-between',
-                          padding: 16,
                         }}
+                        className="nav"
                       >
-                        <div>
+                        <div
+                          style={{
+                            flexShrink: 1,
+                            flexGrow: 1,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
                           <strong>
-                            cbmb
+                            { configuration.name }
                           </strong>
                           <br />
-                          <small>
-                            2345f09b7234a5d0
+                          <small
+                            style={{
+                              whiteSpace: 'nowrap',
+                              width: '100%',
+                            }}
+                          >
+                            { configuration.apiKey }
                           </small>
                         </div>
-                        <div>
-                          <button type="button">
+                        <div style={{ marginLeft: 12, }}>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              removeConfiguration(configuration)
+                              e.stopPropagation()
+                            }}
+                          >
                             Del
                           </button>
                         </div>
@@ -93,12 +116,27 @@ function Sidebar({
   )
 }
 
-const mapStateToProps = ({ configuration, }) => ({
+Sidebar.defaultProps = {
+  configurations: null,
+  clearConfigurations: null,
+  removeConfiguration: null,
+}
+
+Sidebar.propTypes = {
+  configurations: arrayOf(shape()),
+  clearConfigurations: func,
+  removeConfiguration: func,
+}
+
+const mapStateToProps = ({ configuration, router, }) => ({
   ...configuration,
+  ...router,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  clearConfigurationList: actionClearConfigurationList,
+  clearConfigurations: actionClearConfigurations,
+  goBack: actionGoBack,
+  removeConfiguration: actionRemoveConfiguration,
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(Sidebar)

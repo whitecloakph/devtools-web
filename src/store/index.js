@@ -5,8 +5,8 @@ import {
   applyMiddleware,
 } from 'redux'
 import { connectRouter, routerMiddleware, } from 'connected-react-router'
+import environment from './environment'
 import configuration from './configuration'
-import collection from './collection'
 
 import HISTORY from '../history'
 
@@ -19,7 +19,7 @@ const MIDDLEWARE = [
 
 const ROOT_REDUCER = combineReducers({
   configuration,
-  collection,
+  environment,
 })
 
 const STORE = createStore(

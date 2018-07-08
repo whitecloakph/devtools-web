@@ -2,15 +2,17 @@ import React from 'react'
 import autoBind from 'react-autobind'
 import { connect, } from 'react-redux'
 import { bindActionCreators, } from 'redux'
-import { shape, func, } from 'prop-types'
+import { arrayOf, shape, func, } from 'prop-types'
 import { push as actionPush, } from 'connected-react-router'
 
 import { getRootCollections, } from '../../services/Collection'
+import { generateId, } from '../../utilities/id'
 
 import AddConfigurationForm from './components/AddConfigurationForm'
 
 import {
   addConfiguration as actionAddConfiguration,
+  STATUS_DEFAULT,
 } from '../../store/configuration'
 
 class Home extends React.Component {
@@ -22,28 +24,36 @@ class Home extends React.Component {
     autoBind(this)
   }
 
-  componentWillReceiveProps({ selectedConfiguration, push, }) {
-    if (selectedConfiguration) {
-      push(`/configurations/${selectedConfiguration.id}`)
-    }
+  viewConfiguration(id) {
+    const { push, } = this.props
+
+    push(`/configurations/browse/${id}`)
   }
 
   submitForm(values) {
-    const { addConfiguration, } = this.props
+    const { addConfiguration, configurations, } = this.props
 
     this.setState({
       isAddingConfiguration: true,
     })
+
     getRootCollections({ apiKey: values.apiKey, })
       .then(
         (res) => {
+          const id = generateId()
           addConfiguration({
+            id,
             name: values.name,
             apiKey: values.apiKey,
-            collections: res.data.collections,
+            children: res.data.collections,
+            status: STATUS_DEFAULT,
           })
           this.setState({
             isAddingConfiguration: false,
+          }, () => {
+            if (configurations.length < 2) {
+              this.viewConfiguration(id)
+            }
           })
         },
         () => {
@@ -75,14 +85,14 @@ class Home extends React.Component {
 }
 
 Home.defaultProps = {
-  selectedConfiguration: null,
   addConfiguration: null,
+  configurations: [],
   push: null,
 }
 
 Home.propTypes = {
-  selectedConfiguration: shape(),
   addConfiguration: func,
+  configurations: arrayOf(shape()),
   push: func,
 }
 

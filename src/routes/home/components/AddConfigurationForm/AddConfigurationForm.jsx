@@ -1,66 +1,61 @@
 import React from 'react'
-import autoBind from 'react-autobind'
-import { Form, } from 'react-form'
+import { Form, } from 'informed'
 import { func, bool, } from 'prop-types'
 
 import TextBox from '../../../../components/TextBox'
 
-function validate({ name, apiKey, }) {
-  const errors = {}
-
-  if (!name) {
-    errors.name = 'Name is required.'
-  }
-
-  if (apiKey) {
-    errors.name = 'API key is required.'
-  }
-
-  return errors
-}
-
 class AddConfigurationForm extends React.Component {
-  constructor() {
-    super()
-    autoBind(this)
-  }
-
   render() {
     const { onSubmit, disabled, } = this.props
     return (
       <Form
         onSubmit={onSubmit}
-        validate={validate}
       >
-        {({ submitForm, }) => (
-          <form
-            onSubmit={submitForm}
+        {({ formState, }) => (
+          <fieldset
+            disabled={disabled}
           >
-            <fieldset
-              style={{ border: 0, padding: 0, margin: 0, }}
-              disabled={disabled}
-            >
-              <div style={{ marginTop: 16, marginBottom: 16, }}>
-                <TextBox
-                  name="name"
-                  label="Name"
-                />
-              </div>
-              <div style={{ marginTop: 16, marginBottom: 16, }}>
-                <TextBox
-                  name="apiKey"
-                  label="API Key"
-                />
-              </div>
-              <div style={{ marginTop: 16, }}>
-                <button
-                  type="submit"
-                >
-                  Add Configuration
-                </button>
-              </div>
-            </fieldset>
-          </form>
+            <div style={{ marginTop: 16, marginBottom: 16, }}>
+              <TextBox
+                type="text"
+                name="name"
+                label="Name"
+                validate={(value) => {
+                  if (!value) {
+                    return 'Name is required'
+                  }
+                  return null
+                }}
+                validateOnChange
+                validateOnBlur
+                notify={['apiKey', ]}
+              />
+            </div>
+            <div style={{ marginTop: 16, marginBottom: 16, }}>
+              <TextBox
+                type="text"
+                name="apiKey"
+                label="API Key"
+                validate={(value) => {
+                  if (!value) {
+                    return 'API key is required'
+                  }
+                  return null
+                }}
+                validateOnChange
+                validateOnBlur
+                notify={['name', ]}
+              />
+            </div>
+            <div style={{ marginTop: 16, }}>
+              <button
+                type="submit"
+                disabled={formState.pristine || formState.invalid}
+              >
+                Add Configuration
+              </button>
+            </div>
+          </fieldset>
         )}
       </Form>
     )

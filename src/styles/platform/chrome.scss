@@ -1,0 +1,65 @@
+:root[data-browser="chrome"] {
+  font-size: 16px;
+}
+
+:root[data-browser="chrome"] button {
+  padding: 0 12px;
+  height: 24px;
+  border-radius: 2px;
+  border: 1px solid var(--button-border-color);
+  background-color: var(--button-bg-color);
+}
+
+:root[data-browser="chrome"] :focus {
+  outline: 0;
+}
+
+:root[data-browser="chrome"] h1 {
+  font-size: 15px;
+}
+
+:root[data-browser="chrome"] h2 {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+:root[data-browser="chrome"] .error {
+  color: red;
+  font-size: 0.9rem;
+}
+
+:root[data-browser="chrome"] .nav {
+  padding: 16px;
+  text-decoration: none;
+  color: inherit;
+}
+
+:root[data-browser="chrome"] .nav.active {
+  background-color: var(--selection-bg-color);
+  color: var(--selection-fg-color);
+}
+
+:root[data-browser="chrome"] .configuration-list {
+  border-top: 1px solid var(--divider-color);
+  margin-top: 2px;
+  padding-top: 2px;
+}
+
+:root[data-browser="chrome"] .toolbar {
+  border-bottom: 1px solid var(--divider-color);
+  margin-bottom: 2px;
+}
+
+:root[data-browser="chrome"] .sidebar {
+  display: flex;
+  position: relative;
+  height: 100%;
+  flex-direction: column;
+  background-color: var(--toolbar-bg-color);
+  color: var(--toolbar-fg-color);
+}
+
+:root[data-browser="chrome"] .toolbar {
+  background-color: var(--toolbar-bg-color);
+  color: var(--toolbar-fg-color);
+}

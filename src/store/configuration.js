@@ -1,136 +1,193 @@
-import { generateId, } from '../utilities/id'
-import { getConfigurationIdFromUrl, } from '../utilities/configuration'
-import debug from '../utilities/debug'
-
-function constructInitialState({ hasConfigurations, }) {
-  const INITIAL_STATE = {
-    configurations: [],
-    selectedConfiguration: null,
-    lastSelectedConfiguration: null,
-  }
-
-  if (hasConfigurations) {
-    INITIAL_STATE.configurations = [
-      {
-        id: '0123456789abcdef',
-        name: 'cbmb',
-        apiKey: '031d7aca0b764811b85b822eb9b2008a',
-      },
-    ]
-  }
-
-  return INITIAL_STATE
+const INITIAL_STATE = {
+  configurations: [],
+  environments: [],
 }
-
-const INITIAL_STATE = constructInitialState(debug)
 
 function addConfiguration(configuration) {
   return {
     type: 'configuration.addConfiguration',
     payload: {
-      configuration: {
-        ...configuration,
-        id: generateId(), // TODO change this to unique ID
-      },
+      configuration,
     },
   }
 }
 
-function clearConfigurationList() {
+function updateConfiguration(configuration) {
   return {
-    type: 'configuration.clearConfigurationList',
+    type: 'configuration.updateConfiguration',
+    payload: {
+      configuration,
+    },
   }
 }
 
-function loadCollectionEndpoints(collection, endpoints) {
+function clearConfigurations() {
   return {
-    type: 'configuration.loadCollectionEndpoints',
+    type: 'configuration.clearConfigurations',
+  }
+}
+
+function removeConfiguration(configuration) {
+  return {
+    type: 'configuration.removeConfiguration',
+    payload: {
+      configuration,
+    },
+  }
+}
+
+function setCollectionStatus(collection, status) {
+  return {
+    type: 'configuration.setCollectionStatus',
     payload: {
       collection,
-      endpoints,
+      status,
     },
   }
 }
 
-function getLoadCollectionEndpointsFlux(state, payload) {
-  const configurations = state.configurations.map(conf => ({
-    ...conf,
-    collections: conf.collections.map((coll) => {
-      if (coll.id !== payload.collection.id) {
-        return coll
-      }
+function loadCollectionChildren(collection, children) {
+  return {
+    type: 'configuration.loadCollectionChildren',
+    payload: {
+      collection,
+      children,
+    },
+  }
+}
 
-      return {
-        ...coll,
-        endpoints: payload.endpoints,
-      }
-    }),
-  }))
+function getLoadCollectionChildrenNewState(parent, payload) {
+  // TODO optimize so the app need not walk other configurations
+  const { collection, children, } = payload
 
-  let selectedConfiguration
-  if (state.selectedConfiguration) {
-    selectedConfiguration = configurations.filter(c => c.id === state.selectedConfiguration.id)
-    if (selectedConfiguration) {
-      [selectedConfiguration, ] = selectedConfiguration
-    } else {
-      selectedConfiguration = null
+  if (parent.id === collection.id) {
+    return {
+      ...parent,
+      children: children.children,
     }
   }
 
-  return {
-    configurations,
-    selectedConfiguration,
+  if (parent.children) {
+    return {
+      ...parent,
+      children: parent.children.map(
+        c => getLoadCollectionChildrenNewState(c, payload)
+      ),
+    }
   }
+
+  return parent
 }
 
-function getRouterLocationChangeFlux(state, payload) {
-  const configurationId = getConfigurationIdFromUrl(payload.location.pathname)
-  let selectedConfiguration = state.configurations.filter(c => c.id === configurationId)
-  if (selectedConfiguration.length > 0) {
-    [selectedConfiguration, ] = selectedConfiguration
-  } else {
-    selectedConfiguration = null
+function getSetCollectionStatusNewState(parent, payload) {
+  const { collection, status, } = payload
+
+  if (parent.id === collection.id) {
+    return {
+      ...parent,
+      status,
+    }
   }
 
-  return {
-    selectedConfiguration,
+  if (parent.children) {
+    return {
+      ...parent,
+      children: parent.children.map(
+        c => getSetCollectionStatusNewState(c, payload)
+      ),
+    }
   }
+
+  return parent
+}
+
+function getSetEndpointStatusNewState(parent, payload) {
+  if (parent.children) {
+    return {
+      ...parent,
+      children: parent.children.map(
+        c => getSetCollectionStatusNewState(c, payload)
+      ),
+    }
+  }
+
+  return parent
 }
 
 function reducer(state = INITIAL_STATE, { type, payload, }) {
-  let flux
-
   switch (type) {
     case 'configuration.addConfiguration':
-      flux = {
+      return {
+        ...state,
         configurations: [
           ...state.configurations,
           payload.configuration,
         ],
       }
-      break
-    case 'configuration.clearConfigurationList':
-      flux = {
+    case 'configuration.updateConfiguration':
+      return {
+        ...state,
+        configurations: state.configurations.map(configuration => (
+          configuration.id === payload.configuration.id ? payload.configuration : configuration
+        )),
+      }
+    case 'configuration.clearConfigurations':
+      return {
+        ...state,
         configurations: [],
       }
-      break
-    case 'configuration.loadCollectionEndpoints':
-      flux = getLoadCollectionEndpointsFlux(state, payload)
-      break
-    case '@@router/LOCATION_CHANGE':
-      flux = getRouterLocationChangeFlux(state, payload)
-      break
+    case 'configuration.removeConfiguration':
+      return {
+        ...state,
+        configurations: state.configurations.filter(configuration => (
+          configuration.id !== payload.configuration.id
+        )),
+      }
+    case 'configuration.setCollectionStatus':
+      return {
+        ...state,
+        configurations: state.configurations.map(
+          configuration => getSetCollectionStatusNewState(configuration, payload)
+        ),
+      }
+    case 'configuration.loadCollectionChildren':
+      return {
+        ...state,
+        configurations: state.configurations.map(
+          configuration => getLoadCollectionChildrenNewState(configuration, payload)
+        ),
+      }
+    case 'configuration.setEndpointStatus':
+      return {
+        ...state,
+        configurations: state.configuratios.map(
+          configuration => getSetEndpointStatusNewState(configuration, payload)
+        ),
+      }
     default:
-      flux = {}
       break
   }
 
-  return { ...state, ...flux, }
+  return state
 }
+
+const STATUS_DEFAULT = Symbol('configuration.STATUS_DEFAULT')
+const STATUS_PENDING = Symbol('configuration.STATUS_PENDING')
+const STATUS_SUCCESS = Symbol('configuration.STATUS_SUCCESS')
+const STATUS_PARTIAL = Symbol('configuration.STATUS_PARTIAL')
+const STATUS_FAILURE = Symbol('configuration.STATUS_FAILURE')
 
 export {
   addConfiguration,
-  clearConfigurationList,
-  loadCollectionEndpoints,
+  updateConfiguration,
+  clearConfigurations,
+  removeConfiguration,
+  setCollectionStatus,
+  loadCollectionChildren,
+  STATUS_DEFAULT,
+  STATUS_PENDING,
+  STATUS_SUCCESS,
+  STATUS_PARTIAL,
+  STATUS_FAILURE,
 }
 export default reducer
